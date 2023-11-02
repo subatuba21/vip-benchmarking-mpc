@@ -37,6 +37,7 @@ with Model("double_integrator") as M:
 
     F = M.parameter([4, 4])
     F_2 = M.parameter([2, 2])
+    x_g = M.parameter(4)
 
     x_steps = []
     u_steps = []
@@ -49,7 +50,7 @@ with Model("double_integrator") as M:
 
     for i in range(0, N):
         # F = np.linalg.cholesky(Q)
-        Fx = Expr.mul(F, x_steps[i])
+        Fx = Expr.mul(F, Expr.sub(x_g, x_steps[i]))
         r = M.variable()
         M.constraint(Expr.vstack(1, r, Fx), Domain.inRotatedQCone())
         cost.append(r)
@@ -62,8 +63,6 @@ with Model("double_integrator") as M:
 
 
     M.objective('MinimizeDeviationFromGoal', ObjectiveSense.Minimize, Expr.add(cost))
-
-    print(Q, R)
 
     F.setValue(np.linalg.cholesky(Q))
     F_2.setValue(np.linalg.cholesky(R))
