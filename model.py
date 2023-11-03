@@ -1,12 +1,17 @@
 from mosek.fusion import *
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 N = 10
+DELTA_T = 0.1
 
 # goal = [10, 0, 0, 0]
 Q = np.eye(4)
-R = np.eye(2)
+R = np.eye(2) * 0.001
+
+def rd(n):
+    return round(n, 3)
 
 with Model("double_integrator") as M:
     # x = M.variable("x", t) # [Vx, Vy, X, Y]
@@ -38,6 +43,7 @@ with Model("double_integrator") as M:
     F = M.parameter([4, 4])
     F_2 = M.parameter([2, 2])
     x_g = M.parameter(4)
+    x_start = M.parameter(4)
 
     x_steps = []
     u_steps = []
@@ -47,6 +53,15 @@ with Model("double_integrator") as M:
     for i in range(0, N):
         x_steps.append(M.variable(4))
         u_steps.append(M.variable(2))
+
+
+    A = np.array([[1, 0, DELTA_T, 0], [0, 1, 0, DELTA_T], [0, 0, 1, 0], [0, 0, 0, 1]])
+    B = np.array([[0, 0], [0, 0], [DELTA_T, 0], [0, DELTA_T]])
+
+    for i in range(1, N):
+        M.constraint(Expr.sub(x_steps[i], Expr.add(Expr.mul(A, x_steps[i-1]), Expr.mul(B, u_steps[i-1]))), Domain.equalsTo(0))
+
+    M.constraint(Expr.sub(x_steps[0], x_start), Domain.equalsTo(0))
 
     for i in range(0, N):
         # F = np.linalg.cholesky(Q)
@@ -67,11 +82,31 @@ with Model("double_integrator") as M:
     F.setValue(np.linalg.cholesky(Q))
     F_2.setValue(np.linalg.cholesky(R))
 
+    x_g.setValue([2.5, 3.5, 0, 0])
+    x_start.setValue([2, 3, 2, 3])
+
     M.solve()
 
+    x_pos = []
+    y_pos = []
+
+    labels = []
     for i in range(0, N):
         print("x", i, x_steps[i].level())
         print("u", i, u_steps[i].level())
+
+        x_pos.append(x_steps[i].level()[0])
+        y_pos.append(x_steps[i].level()[1])
+        labels.append("time: " + str(rd(DELTA_T*i)) + " V_X: " + str(rd(x_steps[i].level()[2])) + " V_Y: " + str(rd(x_steps[i].level()[3])))
+
+    fig, ax = plt.subplots()
+    ax.plot(x_pos, y_pos)
+    ax.scatter(x_pos, y_pos)
+
+    for i, txt in enumerate(labels):
+        ax.text(x_pos[i], y_pos[i], txt, ha='right', va='bottom', fontsize=5)  # adjust positioning as needed
+
+    plt.show()
 
 
     
