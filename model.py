@@ -183,27 +183,60 @@ def randomized_test_run(num_tests, numRandomPlotsShown):
             ]
         )
 
+        G_goal = [np.random.randint(10, 30), np.random.randint(10, 30), np.random.randint(10, 30), np.random.randint(10, 30), np.random.randint(1, 20), np.random.randint(1, 20), np.random.randint(1, 20), np.random.randint(1, 20)]
+
         M.getParameter("G_goal").setValue(
-            [
-                np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30)
-            ]
+            G_goal
         )
 
         M.getParameter("C").setValue([[1, 0], [-1, 0], [0, 1], [0, -1]])
-        M.getParameter("C_goal").setValue([np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30)])
+        M.getParameter("C_goal").setValue([np.random.randint(20, 30), np.random.randint(20, 30), np.random.randint(20, 30), np.random.randint(20, 30)])
 
-        M.getParameter("x_g").setValue([np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30)])
-        M.getParameter("x_start").setValue([np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30), np.random.randint(0, 30)])
+        M.getParameter("x_g").setValue([np.random.randint(-G_goal[1] + 5, G_goal[0] - 5), np.random.randint(-G_goal[3] + 5, G_goal[2] - 5), np.random.randint(-G_goal[5], G_goal[4]), np.random.randint(-G_goal[7], G_goal[6])])
+        M.getParameter("x_start").setValue([np.random.randint(-G_goal[1] + 5, G_goal[0] - 5), np.random.randint(-G_goal[3] + 5, G_goal[2] - 5), np.random.randint(-G_goal[5], G_goal[4]), np.random.randint(-G_goal[7], G_goal[6])])
 
         M.setSolverParam("numThreads", 1)
         models.append(M)
 
     Model.solveBatch(False, -1.0, 4, models)
 
-    for
+    for x in range(0, numRandomPlotsShown):
+        labels = []
+        x_pos = []
+        y_pos = []
+
+        M = models[x]
+
+        for i in range(0, N):
+            x_i = M.getVariable(x_step_name(i))
+            u_i = M.getVariable(u_step_name(i))
+            print("x", i, x_i.level())
+            print("u", i, u_i.level())
+
+            x_pos.append(x_i.level()[0])
+            y_pos.append(u_i.level()[1])
+            labels.append(
+                "time: "
+                + str(rd(DELTA_T * i))
+                + " V_X: "
+                + str(rd(x_i.level()[2]))
+                + " V_Y: "
+                + str(rd(x_i.level()[3]))
+            )
+
+        fig, ax = plt.subplots()
+        ax.plot(x_pos, y_pos)
+        ax.scatter(x_pos, y_pos)
+
+        for i, txt in enumerate(labels):
+            ax.text(
+                x_pos[i], y_pos[i], txt, ha="right", va="bottom", fontsize=5
+            )  # adjust positioning as needed
+
+        plt.show()
 
     
 
 
 # initial_test_run()
-randomized_test_run(1000)
+randomized_test_run(10,3)
