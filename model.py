@@ -1,6 +1,7 @@
 from mosek.fusion import *
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 def rd(n):
     return round(n, 3)
@@ -157,7 +158,7 @@ def initial_test_run():
 
 
 
-def randomized_test_run(num_tests, numRandomPlotsShown):
+def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
     models = []
     for i in range(0, num_tests):
         Q = np.eye(4)
@@ -198,7 +199,9 @@ def randomized_test_run(num_tests, numRandomPlotsShown):
         M.setSolverParam("numThreads", 1)
         models.append(M)
 
+    startTime = time.time()
     Model.solveBatch(False, -1.0, 4, models)
+    endTime = time.time()
 
     for x in range(0, numRandomPlotsShown):
         labels = []
@@ -234,9 +237,11 @@ def randomized_test_run(num_tests, numRandomPlotsShown):
             )  # adjust positioning as needed
 
         plt.show()
+    return endTime - startTime
 
     
 
 
 # initial_test_run()
-randomized_test_run(10,3)
+t1 = randomized_test_run_return_time(1000,0)
+print(t1)
