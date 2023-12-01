@@ -149,6 +149,9 @@ def initial_test_run():
     ax.plot(x_pos, y_pos)
     ax.scatter(x_pos, y_pos)
 
+    plt.xlabel("X Position")
+    plt.ylabel("Y Position")
+
     for i, txt in enumerate(labels):
         ax.text(
             x_pos[i], y_pos[i], txt, ha="right", va="bottom", fontsize=5
@@ -231,6 +234,9 @@ def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
         ax.plot(x_pos, y_pos)
         ax.scatter(x_pos, y_pos)
 
+        plt.xlabel("X Position")
+        plt.ylabel("Y Position")
+
         for i, txt in enumerate(labels):
             ax.text(
                 x_pos[i], y_pos[i], txt, ha="right", va="bottom", fontsize=5
@@ -238,6 +244,7 @@ def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
 
         plt.show()
     return endTime - startTime
+
 
     
 
@@ -274,4 +281,24 @@ def plotgraph():
 
     plt.show()
 
-plotgraph()
+
+def graphTimeValues(values):
+    datapoints = []
+    for i in range(0, len(values)):
+        t = np.average([randomized_test_run_return_time(values[i], 0) for x in range(0, 10)])
+        datapoints.append(t)
+        print(str(values[i]) + " problems")
+        print(str(t) + " seconds")
+        print()
+        print()
+
+    plt.plot(values, datapoints)
+    plt.scatter(values, datapoints)
+
+    plt.xlabel('Number of Quadratic Problems')
+    plt.ylabel('Time to Solve (Seconds)')
+
+    plt.show()
+
+
+print(np.average([randomized_test_run_return_time(1000, 0) for x in range(0, 5) ]))
