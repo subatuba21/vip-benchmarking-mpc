@@ -200,7 +200,7 @@ def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
         models.append(M)
 
     startTime = time.time()
-    Model.solveBatch(False, -1.0, 4, models)
+    Model.solveBatch(False, -1.0, 9, models)
     endTime = time.time()
 
     for x in range(0, numRandomPlotsShown):
@@ -243,5 +243,35 @@ def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
 
 
 # initial_test_run()
-t1 = randomized_test_run_return_time(1000,0)
-print(t1)
+def graphTime(START_PROBS, MAX_PROBS):
+    dataPoints50 = []
+    num_tests = [1] + [50 * i for i in range(int(START_PROBS/50), 1 + int(MAX_PROBS/50))]
+
+    for i in range(0, len(num_tests)):
+        t = np.average([randomized_test_run_return_time(num_tests[i],0) for x in range(0, 5)])
+        dataPoints50.append(t)
+        print(str(num_tests[i]) + " problems")
+        print(str(t) + " seconds")
+        print()
+        print()
+
+    plt.plot(num_tests, dataPoints50)
+    plt.scatter(num_tests, dataPoints50)
+
+    plt.xlabel('Number of Quadratic Problems')
+    plt.ylabel('Time to Solve (Seconds)')
+
+    plt.show()
+
+def plotgraph():
+    num_tests = [1] + [50 * i for i in range(int(50/50), 1 + int(1000/50))]
+    dPoints = [0.0021039962768554686, 0.015579032897949218, 0.030572509765625, 0.0453087329864502, 0.061007213592529294, 0.07614879608154297, 0.09369559288024902, 0.10915536880493164, 0.1266758918762207, 0.14403061866760253, 0.15753703117370604, 0.17067155838012696, 0.18402676582336425, 0.19917492866516112, 0.21742448806762696, 0.23188304901123047, 0.24667963981628419, 0.27835822105407715, 0.28180885314941406, 0.31627683639526366, np.average([randomized_test_run_return_time(1000, 0) for x in range(0, 5) ])]
+    plt.plot(num_tests, dPoints)
+    plt.scatter(num_tests, dPoints)
+
+    plt.xlabel('Number of Quadratic Problems')
+    plt.ylabel('Time to Solve (Seconds)')
+
+    plt.show()
+
+plotgraph()

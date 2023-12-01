@@ -1,0 +1,55 @@
+1 problems
+0.0014679670333862306 seconds
+
+
+50 problems
+0.015749120712280275 seconds
+
+
+100 problems
+0.030566859245300292 seconds
+
+
+150 problems
+0.0462092399597168 seconds
+
+
+200 problems
+0.06383507251739502 seconds
+
+
+250 problems
+0.07697303295135498 seconds
+
+
+300 problems
+0.0930246353149414 seconds
+
+
+350 problems
+0.1083970308303833 seconds
+
+
+400 problems
+0.12389981746673584 seconds
+
+
+450 problems
+0.1395188093185425 seconds
+
+
+500 problems
+0.1655289649963379 seconds
+
+
+550 problems
+0.18681740760803223 seconds
+
+
+600 problems
+0.20791516304016114 seconds
+
+
+650 problems
+0.22689564228057862 seconds
+
