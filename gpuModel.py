@@ -5,13 +5,14 @@ from scipy import sparse
 
 
 DELTA_T = 0.1
-N = 10
+N = 9
 
 umin = np.array([-20, -20])
 umax = np.array([20, 20])
 xmin = np.array([-30, -30, -5, -5])
 xmax = np.array([30, 30, 5, 5])
 x0 = np.array([2, 3, 2, 3])
+xr = np.array([2.5, 3.5, 0, 0])
 
 Q = sparse.eye(4)
 R = sparse.eye(2) * 0.001
@@ -24,11 +25,8 @@ P = sparse.block_diag([sparse.kron(sparse.eye(N), Q), QN,
                        sparse.kron(sparse.eye(N), R)], format='csc')
 
 # - linear objective
-# q = np.hstack([np.kron(np.ones(N), -Q.dot(xr)), -QN.dot(xr),
-#                np.zeros(N*nu)])
-
-# No linear objective
-q = np.zeros((N + 1) * nx + N * nu)
+q = np.hstack([np.kron(np.ones(N), -Q.dot(xr)), -QN.dot(xr),
+               np.zeros(N*nu)])
 
 Ad = sparse.csc_matrix([[1, 0, DELTA_T, 0], [0, 1, 0, DELTA_T], [0, 0, 1, 0], [0, 0, 0, 1]])
 Bd = sparse.csc_matrix([[0, 0], [0, 0], [DELTA_T, 0], [0, DELTA_T]])
@@ -52,4 +50,4 @@ prob = osqp.OSQP()
 prob.setup(P, q, A, l, u, warm_start=True)
 
 res = prob.solve()
-print(res)
+print(res, res.x)
