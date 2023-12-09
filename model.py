@@ -220,7 +220,7 @@ def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
             print("u", i, u_i.level())
 
             x_pos.append(x_i.level()[0])
-            y_pos.append(u_i.level()[1])
+            y_pos.append(x_i.level()[1])
             labels.append(
                 "time: "
                 + str(rd(DELTA_T * i))
