@@ -301,4 +301,4 @@ def graphTimeValues(values):
     plt.show()
 
 
-print(np.average([randomized_test_run_return_time(1000, 0) for x in range(0, 5) ]))
+initial_test_run()
