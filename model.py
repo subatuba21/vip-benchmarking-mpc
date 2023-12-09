@@ -301,4 +301,4 @@ def graphTimeValues(values):
     plt.show()
 
 
-initial_test_run()
+graphTime(50, 350)
