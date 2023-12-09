@@ -19,7 +19,7 @@ def initial_test_run():
     xr = np.array([2.5, 3.5, 0, 0])
 
     Q = sparse.eye(4)
-    R = sparse.eye(2) * 0.001
+    R = sparse.eye(2) * 0.01
 
     nx, nu = [4, 2]
     QN = Q
@@ -29,7 +29,7 @@ def initial_test_run():
                         sparse.kron(sparse.eye(N), R)], format='csc')
 
     # - linear objective
-    q = np.hstack([np.kron(np.ones(N), -2 * Q.dot(xr)), -2 * QN.dot(xr),
+    q = np.hstack([np.kron(np.ones(N), -1 * Q.dot(xr)), -1 * QN.dot(xr),
                 np.zeros(N*nu)])
 
     Ad = sparse.csc_matrix([[1, 0, DELTA_T, 0], [0, 1, 0, DELTA_T], [0, 0, 1, 0], [0, 0, 0, 1]])
@@ -55,8 +55,10 @@ def initial_test_run():
 
     res = prob.solve()
     # print(res, res.x, res.x[N*(nx-1):N*nx])
-    x_pos = res.x[0:N*nx + 1:4]
-    y_pos = res.y[1:N*nx + 1:4]
+    x_pos = res.x[0:N*nx:4]
+    y_pos = res.x[1:N*nx:4]
+
+    print(x_pos, y_pos, res.x)
 
     fig, ax = plt.subplots()
     

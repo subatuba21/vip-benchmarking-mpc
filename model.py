@@ -87,7 +87,7 @@ def CreateModel(DELTA_T, N):
 
 def initial_test_run():
     Q = np.eye(4)
-    R = np.eye(2) * 0.001
+    R = np.eye(2) * 0.01
 
     DELTA_T = 0.1
     N = 10
@@ -135,7 +135,7 @@ def initial_test_run():
         print("u", i, u_i.level())
 
         x_pos.append(x_i.level()[0])
-        y_pos.append(u_i.level()[1])
+        y_pos.append(x_i.level()[1])
         labels.append(
             "time: "
             + str(rd(DELTA_T * i))
