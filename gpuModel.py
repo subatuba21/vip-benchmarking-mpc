@@ -5,8 +5,6 @@ from scipy import sparse
 import matplotlib.pyplot as plt
 import time
 
-
-
 def initial_test_run():
     DELTA_T = 0.1
     N = 10
@@ -78,6 +76,7 @@ def initial_test_run():
     plt.show()
 
 def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
+    totalTime = 0
     numPlotsDone = 0
     for i in range(0, num_tests):
         DELTA_T = np.random.random() * 0.5
@@ -124,26 +123,52 @@ def randomized_test_run_return_time(num_tests, numRandomPlotsShown):
         prob = osqp.OSQP()
         prob.setup(P, q, A, l, u, warm_start=True)
 
+        startTime = time.time()
         res = prob.solve()
+        endTime = time.time()
+
+        totalTime += (endTime - startTime)
         # print(res, res.x, res.x[N*(nx-1):N*nx])
         x_pos = res.x[0:N*nx:4]
         y_pos = res.x[1:N*nx:4]
 
-        print(x_pos, y_pos, res.x)
+        if numPlotsDone < numRandomPlotsShown:
+            fig, ax = plt.subplots()
+            ax.plot(x_pos, y_pos)
+            ax.scatter(x_pos, y_pos)
 
-        fig, ax = plt.subplots()
-        
+            plt.xlabel("X Position")
+            plt.ylabel("Y Position")
+            numPlotsDone += 1
 
+            # for i, txt in enumerate(labels):
+            #     ax.text(
+            #         x_pos[i], y_pos[i], txt, ha="right", va="bottom", fontsize=5
+            #     )  # adjust positioning as needed
 
-        ax.plot(x_pos, y_pos)
-        ax.scatter(x_pos, y_pos)
+            plt.show()
+    return totalTime
 
-        plt.xlabel("X Position")
-        plt.ylabel("Y Position")
+# initial_test_run()
+def graphTime(START_PROBS, MAX_PROBS):
+    dataPoints50 = []
+    num_tests = [1] + [50 * i for i in range(int(START_PROBS/50), 1 + int(MAX_PROBS/50))]
 
-        # for i, txt in enumerate(labels):
-        #     ax.text(
-        #         x_pos[i], y_pos[i], txt, ha="right", va="bottom", fontsize=5
-        #     )  # adjust positioning as needed
+    for i in range(0, len(num_tests)):
+        t = np.average([randomized_test_run_return_time(num_tests[i],0) for x in range(0, 5)])
+        dataPoints50.append(t)
+        print(str(num_tests[i]) + " problems")
+        print(str(t) + " seconds")
+        print()
+        print()
 
-        plt.show()
+    plt.plot(num_tests, dataPoints50)
+    plt.scatter(num_tests, dataPoints50)
+
+    plt.xlabel('Number of Quadratic Problems')
+    plt.ylabel('Time to Solve (Seconds)')
+
+    plt.show()
+
+graphTime(50, 350)
+
